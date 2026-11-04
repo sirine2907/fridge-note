@@ -40,13 +40,6 @@ class FloatingNavBar extends StatelessWidget {
             color: c.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(color: c.border),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.violet.withValues(alpha: 0.08),
-                blurRadius: 24,
-                offset: const Offset(0, 8),
-              ),
-            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'core/theme/app_theme.dart';
-import 'core/widgets/empty_state.dart';
-import 'core/widgets/phone_frame.dart';
+import 'app.dart';
+import 'core/config/env.dart';
+import 'core/di/injection.dart';
+import 'features/auth/presentation/cubit/session_cubit.dart';
+import 'features/profile/presentation/cubit/theme_cubit.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Clean URLs on the web (/invite/CODE instead of /#/invite/CODE).
+  usePathUrlStrategy();
   // The Outfit font files are bundled in assets/fonts.
   GoogleFonts.config.allowRuntimeFetching = false;
-  runApp(const FridgeNoteApp());
-}
 
-class FridgeNoteApp extends StatelessWidget {
-  const FridgeNoteApp({super.key});
+  await initDependencies();
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'fridge-note',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      builder: (context, child) => PhoneFrame(child: child!),
-      home: const Scaffold(
-        body: EmptyState(message: 'fridge-note is on its way.'),
-      ),
-    );
-  }
+  final session = SessionCubit(
+    startDemo: sl(),
+    restoreSession: sl(),
+    signOut: sl(),
+    scope: sl(),
+    startInDemo: Env.startInDemo,
+  );
+  await session.init();
+
+  runApp(FridgeNoteApp(session: session, theme: ThemeCubit(sl())));
 }
