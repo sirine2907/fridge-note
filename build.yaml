@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # toJson / fromJson use the SQL names (list_id, field_times, ...),
+          # the same names as the Supabase columns.
+          use_sql_column_name_as_json_key: true
