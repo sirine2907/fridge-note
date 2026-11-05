@@ -45,5 +45,18 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>dev.sirine.fridgeNote</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fridgenote</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:label="fridge-note"
         android:name="${applicationName}"
@@ -23,6 +25,25 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <!-- Let go_router handle the links below. -->
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+            <!-- Invite links: https://sirine2907.github.io/fridge-note/invite/CODE -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="sirine2907.github.io"
+                    android:pathPrefix="/fridge-note/invite/" />
+            </intent-filter>
+            <!-- Same link with the app's own scheme: fridgenote://app/invite/CODE -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="fridgenote" android:host="app" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

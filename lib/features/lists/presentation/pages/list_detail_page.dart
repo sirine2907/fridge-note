@@ -10,7 +10,9 @@ import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/page_header.dart';
 import '../../../../core/widgets/pill_button.dart';
+import '../../../../core/widgets/round_back_button.dart';
 import '../../../../core/widgets/sync_chip.dart';
+import '../../../invite/presentation/widgets/invite_sheet.dart';
 import '../../domain/entities/item_category.dart';
 import '../../domain/entities/list_item.dart';
 import '../../domain/entities/shopping_list.dart';
@@ -52,15 +54,16 @@ class ListDetailPage extends StatelessWidget {
             addItem: sl(),
             syncStatus: sl<SyncEngine>().watchStatus,
           )..add(ListDetailStarted(listId)),
-          child: _ListDetailView(listId: listId),
+          child: ListDetailView(listId: listId),
         );
       },
     );
   }
 }
 
-class _ListDetailView extends StatelessWidget {
-  const _ListDetailView({required this.listId});
+/// The screen itself, without the bloc. Public so widget tests can give it a fake bloc.
+class ListDetailView extends StatelessWidget {
+  const ListDetailView({super.key, required this.listId});
 
   final String listId;
 
@@ -83,6 +86,13 @@ class _ListDetailView extends StatelessWidget {
                   title: list?.name ?? '',
                   subtitle: others.isEmpty ? 'Only you' : 'With ${others.join(', ')}',
                   onBack: () => context.go('/home'),
+                  action: list == null
+                      ? null
+                      : RoundIconButton(
+                          icon: Icons.person_add_alt_1_rounded,
+                          tooltip: 'Invite',
+                          onPressed: () => InviteSheet.show(context, listId: list.id, listName: list.name),
+                        ),
                 ),
                 SyncChip(status: state.sync),
                 const SizedBox(height: 8),
