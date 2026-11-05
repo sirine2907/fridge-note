@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">fridge-note</string>
+    <string name="widget_description">Your current shopping list</string>
+    <string name="widget_empty">Open fridge-note to load your list.</string>
+</resources>

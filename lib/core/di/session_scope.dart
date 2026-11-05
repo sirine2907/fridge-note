@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import '../../features/auth/domain/entities/app_user.dart';
+import '../../features/home_screen_widget/data/home_widget_updater.dart';
 import '../../features/invite/data/demo_invite_repository.dart';
 import '../../features/invite/domain/repositories/invite_repository.dart';
 import '../../features/invite/domain/usecases/invite_usecases.dart';
@@ -82,6 +83,7 @@ class GetItSessionScope implements SessionScope {
     }
 
     final sync = SyncEngine(db: db, store: store, remote: remote, clock: clock);
+    HomeWidgetUpdater? homeWidget;
 
     getIt.pushNewScope(
       scopeName: scopeName,
@@ -138,6 +140,7 @@ class GetItSessionScope implements SessionScope {
       dispose: () async {
         // Stop things in the opposite order they were started.
         partner?.stop();
+        await homeWidget?.dispose();
         if (getIt.isRegistered<CurrentListCubit>()) {
           await getIt<CurrentListCubit>().close();
         }
@@ -156,6 +159,14 @@ class GetItSessionScope implements SessionScope {
     // slow we don't wait for it: the screens read the local database anyway.
     await sync.start().timeout(const Duration(seconds: 4), onTimeout: () {});
     partner?.start();
+
+    if (HomeWidgetUpdater.supported) {
+      homeWidget = HomeWidgetUpdater(
+        currentList: getIt(),
+        watchList: getIt(),
+        watchItems: getIt(),
+      )..start();
+    }
   }
 
   @override
