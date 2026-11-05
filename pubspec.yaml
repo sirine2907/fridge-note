@@ -27,6 +27,7 @@ dependencies:
   sqlite3: ^2.9.4
   supabase_flutter: ^2.18.3
   uuid: ^4.6.0
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:
