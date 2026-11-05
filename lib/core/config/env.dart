@@ -5,12 +5,13 @@ class Env {
   Env._();
 
   static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  /// The publishable key (sb_publishable_...). A legacy anon key works too.
+  static const supabaseKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 
   /// Force demo mode on start. The web build always starts in demo mode.
   static const _demo = bool.fromEnvironment('DEMO');
 
-  static bool get hasSupabase => supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
+  static bool get hasSupabase => supabaseUrl.isNotEmpty && supabaseKey.isNotEmpty;
 
   static bool get startInDemo => _demo || kIsWeb;
 

@@ -19,6 +19,16 @@ abstract class SyncRemote {
   Future<void> dispose();
 }
 
+/// The server answered but refused the change, so sending it again won't help.
+class RemoteRejected implements Exception {
+  const RemoteRejected(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'RemoteRejected: $message';
+}
+
 class RemoteUnavailable implements Exception {
   const RemoteUnavailable([this.message = 'Server not reachable']);
 

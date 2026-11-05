@@ -77,6 +77,8 @@ class SyncEngine {
       _setPhase(SyncPhase.synced);
     } on RemoteUnavailable {
       _setPhase(SyncPhase.offline);
+    } on RemoteRejected catch (error) {
+      debugPrint('Snapshot refused: ${error.message}');
     }
   }
 
@@ -126,6 +128,10 @@ class SyncEngine {
             .write(OutboxCompanion(attempts: Value(entry.attempts + 1)));
         _setPhase(SyncPhase.offline);
         return false;
+      } on RemoteRejected catch (error) {
+        // Keeping it would block everything behind it forever. The next
+        // snapshot puts the server's version back on this phone.
+        debugPrint('Dropped ${patch.table}/${patch.id}: ${error.message}');
       }
       await (db.delete(db.outbox)..where((o) => o.id.equals(entry.id))).go();
     }
@@ -141,6 +147,9 @@ class SyncEngine {
       await store.applyRemote([patch]);
       _lastSyncedAt = DateTime.now();
       _phaseChanges.add(null);
+      // A membership changed, maybe someone added us to a list. Realtime only
+      // sends rows we could already see, so fetch the rest of that list.
+      if (patch.table == 'list_members') unawaited(pull());
     } catch (error) {
       debugPrint('Could not apply ${patch.table}/${patch.id}: $error');
     }
