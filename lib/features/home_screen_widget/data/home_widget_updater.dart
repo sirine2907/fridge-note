@@ -48,7 +48,11 @@ class HomeWidgetUpdater {
   List<ListItem> _items = const [];
 
   /// The widget only exists on Android.
-  static bool get supported => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+  static bool get supported =>
+      enabled && !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  /// Widget tests pretend to be Android but have no home screen. They set this to false.
+  static bool enabled = true;
 
   void start() {
     _follow(currentList.state);

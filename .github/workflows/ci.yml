@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.9
+          channel: stable
+          cache: true
+
+      # drift's in-memory test database needs the sqlite3 library.
+      - name: Install sqlite3
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      # The screenshot goldens are rendered on Windows for the README,
+      # fonts come out slightly different on Linux, so they are skipped here.
+      - run: flutter test --exclude-tags screenshots

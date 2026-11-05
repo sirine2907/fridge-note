@@ -69,6 +69,7 @@ class SyncEngine {
   Future<void> pull() async {
     try {
       final rows = await remote.fetchAll();
+      if (_disposed) return;
       for (final row in rows) {
         clock.observe(row.newestTime);
       }
@@ -124,6 +125,7 @@ class SyncEngine {
       try {
         await remote.push(patch);
       } on RemoteUnavailable {
+        if (_disposed) return false;
         await (db.update(db.outbox)..where((o) => o.id.equals(entry.id)))
             .write(OutboxCompanion(attempts: Value(entry.attempts + 1)));
         _setPhase(SyncPhase.offline);
@@ -133,6 +135,9 @@ class SyncEngine {
         // snapshot puts the server's version back on this phone.
         debugPrint('Dropped ${patch.table}/${patch.id}: ${error.message}');
       }
+      // Signed out while the push was on its way: the database is closed now.
+      // The entry stays in the outbox of the old database, which is fine.
+      if (_disposed) return false;
       await (db.delete(db.outbox)..where((o) => o.id.equals(entry.id))).go();
     }
     _lastSyncedAt = DateTime.now();
